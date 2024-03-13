@@ -52,7 +52,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Initialized: 0
+  useTransition: 1
+  commonOptions:
+    duration: 0.3
+    delay: 0
+    delayInIterations: 0
+    direction: 0
+    curve: 0
+    fill: 0
+    iterations: 0
+    removeOnCompleted: 0
+  isOn: 0
+  bgImage: {fileID: 0}
+  selectedImage: {fileID: 0}
   text: {fileID: 0}
+  bgNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  bgSelectedColor: {r: 1, g: 0, b: 0, a: 1}
+  onValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onOn:
+    m_PersistentCalls:
+      m_Calls: []
+  onOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3277100725101452803
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,8 +226,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

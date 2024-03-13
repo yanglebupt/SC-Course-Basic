@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -24,17 +22,19 @@ namespace YLBasic
     private bool stickV = false;
     private bool isDragging = false;
     public bool IsDragging { get => isDragging; }
-    private bool canDrag = true;
+    public bool canDrag = true;
     // 可拖拽目标
     private RectTransform target;
     #endregion
 
     #region Events
+    [Tooltip("可以用来初始化设置一些拖拽数据")]
     public UnityEvent onBeginDrag;
     [Tooltip("可以用来判断是否接触到可接受区域的")]
     public UnityEvent onDrag;
+    [Tooltip("end 判断是否 attached")]
     public UnityEvent onEndDrag;
-    [Tooltip("end 是否 attached")]
+    [Tooltip("end 后 attached 触发 ")]
     public UnityEvent<GameObject> onEndDragIsAttached;
     [Tooltip("end 的时候 attached 是否冲突")]
     public UnityEvent<GameObject, GameObject, GameObject> onEndDragAttachedOverlap;
@@ -44,6 +44,8 @@ namespace YLBasic
     private List<RectTransform> dragAttachList = new List<RectTransform>();
     // 当前的放置目标
     private RectTransform currentDragAttachRect;
+
+    public RectTransform CurrentDragAttachRect { get => currentDragAttachRect; }
 
     public void CancelDrag()
     {
@@ -195,6 +197,26 @@ namespace YLBasic
         throw new System.Exception("dst does not has LDragAttach component");
       }
       LDragAttach.Attach(target, dst, (GameObject src, GameObject tar, GameObject attach) => onEndDragAttachedOverlap?.Invoke(src, tar, attach));
+    }
+
+    public override void GenerateStructure()
+    {
+      return;
+    }
+
+    public override void DrawEditorPreview(UnityEditor.SerializedObject serializedObject)
+    {
+      return;
+    }
+
+    public override void DrawEditorPreview()
+    {
+      return;
+    }
+
+    public override void InitComponents()
+    {
+      return;
     }
   }
 

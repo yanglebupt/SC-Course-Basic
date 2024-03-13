@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -33,7 +32,7 @@ namespace YLBasic
     public UnityEvent<GameObject, GameObject, GameObject> onEndDragAttachedOverlap;
     #endregion
 
-    protected override void Start()
+    void Start()
     {
       if (useSelf)
       {
@@ -76,6 +75,22 @@ namespace YLBasic
     public void OnEndDrag(PointerEventData eventData)
     {
       draggable.OnEndDrag(eventData);
+    }
+
+    public override void GenerateStructure()
+    {
+    }
+
+    public override void DrawEditorPreview(SerializedObject serializedObject)
+    {
+    }
+
+    public override void DrawEditorPreview()
+    {
+    }
+
+    public override void InitComponents()
+    {
     }
   }
 

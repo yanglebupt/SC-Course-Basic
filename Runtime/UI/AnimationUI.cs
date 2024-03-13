@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -7,22 +6,19 @@ using UnityEditor;
 
 namespace YLBasic
 {
-  public class AnimationUI : MonoBehaviour
+  public abstract class AnimationUI : CustomUI
   {
+    [Header("过渡动画属性")]
     public bool useTransition = true;
-    public float transitionTime = 0.1f;
-
-    private AnimationOptions commonOptions = new AnimationOptions();
-
-    protected virtual void Start()
+    public AnimationOptions commonOptions = new AnimationOptions()
     {
-      commonOptions.duration = transitionTime;
-      commonOptions.fill = AnimationFill.FORWARDS;
-    }
-
+      duration = 0.3f
+    };
     private List<LAnimation> anis = new List<LAnimation>();
+
     protected virtual void FixedUpdate()
     {
+      Debug.Log(anis.Count);
       for (int i = anis.Count - 1; i >= 0; i--)  // 一边遍历，一边删除
       {
         LAnimation item = anis[i];
@@ -35,20 +31,37 @@ namespace YLBasic
       }
     }
 
-    public void TransitionColor<T>(T t, Color src, Color tar) where T : MaskableGraphic
+    public void StopAllAnimation()
+    {
+      for (int i = 0; i < anis.Count; i++)
+      {
+        LAnimation item = anis[i];
+        item.Stop();
+        anis.Remove(item);
+      }
+    }
+
+    public void TransitionColor<T>(T t, Color src, Color tar, Action onCompleted) where T : MaskableGraphic
     {
       if (EditorApplication.isPlaying && useTransition)
-        TransitionColor((Color c) => t.color = c, () => { }, src, tar);
+        TransitionColor((Color c) => t.color = c, onCompleted, src, tar);
       else
         t.color = tar;
     }
 
+    public void TransitionColor<T>(T t, Color src, Color tar) where T : MaskableGraphic
+    {
+      TransitionColor(t, src, tar, () => { });
+    }
+
+    public void TransitionColorTo<T>(T t, Color tar, Action onCompleted) where T : MaskableGraphic
+    {
+      TransitionColor(t, t.color, tar, onCompleted);
+    }
+
     public void TransitionColorTo<T>(T t, Color tar) where T : MaskableGraphic
     {
-      if (EditorApplication.isPlaying && useTransition)
-        TransitionColor((Color c) => t.color = c, () => { }, t.color, tar);
-      else
-        t.color = tar;
+      TransitionColorTo(t, tar, () => { });
     }
 
     public void TransitionColor(Action<Color> onUpdate, Action onCompleted, Color src, Color tar)
@@ -62,6 +75,30 @@ namespace YLBasic
       anis.Add(ani);
       ani.Play();
     }
+
+    public void TransitionAlpha<T>(T t, float src, float tar, Action onCompleted) where T : MaskableGraphic
+    {
+      if (EditorApplication.isPlaying && useTransition)
+        TransitionAlpha((float c) => t.color = GetColorByAlpha(t.color, c), onCompleted, src, tar);
+      else
+        t.color = GetColorByAlpha(t.color, tar);
+    }
+
+    public void TransitionAlpha<T>(T t, float src, float tar) where T : MaskableGraphic
+    {
+      TransitionAlpha(t, src, tar, () => { });
+    }
+
+    public void TransitionAlphaTo<T>(T t, float tar, Action onCompleted) where T : MaskableGraphic
+    {
+      TransitionAlpha(t, t.color.a, tar, onCompleted);
+    }
+
+    public void TransitionAlphaTo<T>(T t, float tar) where T : MaskableGraphic
+    {
+      TransitionAlphaTo(t, tar, () => { });
+    }
+
     public void TransitionAlpha(Action<float> onUpdate, Action onCompleted, float src, float tar)
     {
       AnimationOptions opt = commonOptions;
@@ -72,6 +109,11 @@ namespace YLBasic
       }, opt);
       anis.Add(ani);
       ani.Play();
+    }
+
+    public Color GetColorByAlpha(Color color, float alpha)
+    {
+      return new Color(color.r, color.g, color.b, alpha);
     }
   }
 }

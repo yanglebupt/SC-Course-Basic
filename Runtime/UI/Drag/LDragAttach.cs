@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -36,14 +34,13 @@ namespace YLBasic
     public bool IsActive { get => isActive; }
     private bool isAttached = false;
     // 是否已经存在物品了
-    public bool IsAttached { get => isAttached; set => isAttached = value; }
+    public bool IsAttached { get => isAttached; }
 
     private GameObject attachedGameObject;
-    public GameObject AttachedGameObject { get => attachedGameObject; set => attachedGameObject = value; }
+    public GameObject AttachedGameObject { get => attachedGameObject; }
 
-    protected override void Start()
+    void Start()
     {
-      base.Start();
       Image image = GetComponent<Image>();
       defaultColor = image.color;
       if (useDefaultAction)
@@ -94,7 +91,7 @@ namespace YLBasic
         draggableRect.position = dragAttachRect.position;
         draggableRect.SetParent(dragAttachRect);
         dragAttach.InvokeOnAttached(draggableRect.gameObject);
-        dragAttach.AttachedGameObject = draggableRect.gameObject;
+        dragAttach.attachedGameObject = draggableRect.gameObject;
         if (dragAttach.cancelDrag)
           draggable.CancelDrag();
       }
@@ -129,6 +126,22 @@ namespace YLBasic
     {
       OnAttached?.Invoke();
       OnAttachedParams?.Invoke(obj);
+    }
+
+    public override void GenerateStructure()
+    {
+    }
+
+    public override void DrawEditorPreview(UnityEditor.SerializedObject serializedObject)
+    {
+    }
+
+    public override void DrawEditorPreview()
+    {
+    }
+
+    public override void InitComponents()
+    {
     }
   }
 

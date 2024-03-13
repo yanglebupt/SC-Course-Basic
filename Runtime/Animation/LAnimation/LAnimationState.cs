@@ -198,10 +198,10 @@ namespace YLBasic
   [Serializable]
   public enum AnimationFill
   {
-    // 动画结束回到初始
-    BACKWARDS,
     // 保留动画结束
     FORWARDS,
+    // 动画结束回到初始
+    BACKWARDS,
   }
 
   [Serializable]

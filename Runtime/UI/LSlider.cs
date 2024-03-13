@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using TMPro;
 using System;
 
@@ -55,12 +53,15 @@ namespace YLBasic
 
 
   [Serializable]
-  public struct SliderThresholdColors : IComparable<SliderThresholdColors>
+  public class SliderThresholdColors : IComparable<SliderThresholdColors>
   {
     public float threshold;
     public Color fillColor;
     public Color bgColor;
     public Color textColor;
+
+    private bool _isActive;
+    public bool IsActive { get => _isActive; set => _isActive = value; }
 
     public int CompareTo(SliderThresholdColors other)
     {
@@ -68,7 +69,7 @@ namespace YLBasic
     }
   }
 
-  public class LSlider : CustomUI
+  public class LSlider : AnimationUI
   {
     #region Fields
     [Tooltip("滑动值")]
@@ -80,16 +81,21 @@ namespace YLBasic
     public Image fillarea;
     [Tooltip("进度文字")]
     public TMP_Text text;
-    [Tooltip("填充颜色")]
-    public Color fillColor = Color.white;
-    [Tooltip("背景颜色")]
-    public Color bgColor = Color.black;
-    [Tooltip("文字颜色")]
-    public Color textColor = Color.black;
+    [Tooltip("正常状态颜色")]
+    public SliderThresholdColors normalColors = new SliderThresholdColors()
+    {
+      threshold = 1,
+      bgColor = Color.black,
+      fillColor = Color.white,
+      textColor = Color.blue,
+      IsActive = true
+    };
     [Tooltip("滑动条类型")]
     public SliderMode sliderMode = SliderMode.Rect;
     [Tooltip("填充方式")]
     public Image.FillMethod fillMethod = Image.FillMethod.Horizontal; // FillMethod 和 FillOrigin 是联动的
+    [Tooltip("文本显示方式")]
+    public TextMode textMode = TextMode.PERCENTAGE;
     [HideInInspector]
     public int fillOrigin = 0;
     [HideInInspector]
@@ -106,10 +112,6 @@ namespace YLBasic
     public List<SliderThresholdColors> sliderThresholdColors = new List<SliderThresholdColors>();
     [Tooltip("设置好阈值后勾选排序，设置过程中取消勾选")]
     public bool needSorted = false;
-    public bool useTransition = true;
-    public float transitionTime = 0.05f;
-
-    public TextMode textMode = TextMode.PERCENTAGE;
 
     [HideInInspector]
     public int textCount = 100;
@@ -125,79 +127,64 @@ namespace YLBasic
     public Sprite rect;
     [HideInInspector]
     public Sprite circle;
-    private List<LAnimation> anis = new List<LAnimation>();
     #endregion
 
     #region Editor
 #if UNITY_EDITOR
-  public override void GenerateStructure()
-  {
-    LSlider slider = base.GenerateStructure<LSlider>("Assets/Scripts/07-UI操作/CustomUI/Prefabs/Slider.prefab");
-    Sprite circle = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Scripts/07-UI操作/CustomUI/Sprites/circle.png");
-    Sprite rect = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Scripts/07-UI操作/CustomUI/Sprites/rect.png");
-    slider.rect = rect;
-    slider.circle = circle;
-  }
-  public override void DrawEditorPreview(SerializedObject serializedObject)
-  {
-    serializedObject.Update();
-    SerializedProperty p = serializedObject.FindProperty("fillMethod");
-    SerializedProperty originA = serializedObject.FindProperty("fillOriginA");
-    SerializedProperty originR90 = serializedObject.FindProperty("fillOriginR90");
-    SerializedProperty originH = serializedObject.FindProperty("fillOriginH");
-    SerializedProperty originV = serializedObject.FindProperty("fillOriginV");
-    SerializedProperty textMode = serializedObject.FindProperty("textMode");
-    SerializedProperty textCount = serializedObject.FindProperty("textCount");
-    if (textMode.enumValueIndex == 1)
+    public override void GenerateStructure()
     {
-      EditorGUILayout.PropertyField(textCount);
+      LSlider slider = GenerateStructure<LSlider>("Packages/com.ylbupt.sc-course-basic/Resources/UI/Prefabs/Slider.prefab");
+      Sprite circle = AssetDatabase.LoadAssetAtPath<Sprite>("Packages/com.ylbupt.sc-course-basic/Resources/UI/Sprites/circle.png");
+      Sprite rect = AssetDatabase.LoadAssetAtPath<Sprite>("Packages/com.ylbupt.sc-course-basic/Resources/UI/Sprites/rect.png");
+      slider.rect = rect;
+      slider.circle = circle;
     }
-    if (p.enumValueIndex == 0)
+    public override void DrawEditorPreview(SerializedObject serializedObject)
     {
-      EditorGUILayout.PropertyField(originH, new GUIContent("Fill Origin"));
-      fillOrigin = originH.enumValueIndex;
+      serializedObject.Update();
+      SerializedProperty p = serializedObject.FindProperty("fillMethod");
+      SerializedProperty originA = serializedObject.FindProperty("fillOriginA");
+      SerializedProperty originR90 = serializedObject.FindProperty("fillOriginR90");
+      SerializedProperty originH = serializedObject.FindProperty("fillOriginH");
+      SerializedProperty originV = serializedObject.FindProperty("fillOriginV");
+      SerializedProperty textMode = serializedObject.FindProperty("textMode");
+      SerializedProperty textCount = serializedObject.FindProperty("textCount");
+      if (textMode.enumValueIndex == 1)
+      {
+        EditorGUILayout.PropertyField(textCount);
+      }
+      if (p.enumValueIndex == 0)
+      {
+        EditorGUILayout.PropertyField(originH, new GUIContent("Fill Origin"));
+        fillOrigin = originH.enumValueIndex;
+      }
+      else if (p.enumValueIndex == 1)
+      {
+        EditorGUILayout.PropertyField(originV, new GUIContent("Fill Origin"));
+        fillOrigin = originV.enumValueIndex;
+      }
+      else if (p.enumValueIndex == 2)
+      {
+        EditorGUILayout.PropertyField(originR90, new GUIContent("Fill Origin"));
+        fillOrigin = originR90.enumValueIndex;
+      }
+      else
+      {
+        EditorGUILayout.PropertyField(originA, new GUIContent("Fill Origin"));
+        fillOrigin = originA.enumValueIndex;
+      }
+      serializedObject.ApplyModifiedProperties();
     }
-    else if (p.enumValueIndex == 1)
+    public override void DrawEditorPreview() // Update
     {
-      EditorGUILayout.PropertyField(originV, new GUIContent("Fill Origin"));
-      fillOrigin = originV.enumValueIndex;
+      InitValues();
     }
-    else if (p.enumValueIndex == 2)
-    {
-      EditorGUILayout.PropertyField(originR90, new GUIContent("Fill Origin"));
-      fillOrigin = originR90.enumValueIndex;
-    }
-    else
-    {
-      EditorGUILayout.PropertyField(originA, new GUIContent("Fill Origin"));
-      fillOrigin = originA.enumValueIndex;
-    }
-    serializedObject.ApplyModifiedProperties();
-  }
-  public override void DrawEditorPreview() // Update
-  {
-    InitValues();
-  }
 #endif
     #endregion
 
     void Start()
     {
       InitValues();
-    }
-
-    private void FixedUpdate()
-    {
-      for (int i = anis.Count - 1; i >= 0; i--)  // 一边遍历，一边删除
-      {
-        LAnimation item = anis[i];
-        if (item.Completed)
-        {
-          anis.Remove(item);
-          continue;
-        }
-        item.Update(Time.fixedDeltaTime);
-      }
     }
 
     public void InitValues()
@@ -212,19 +199,30 @@ namespace YLBasic
       // 根据 value 选择颜色
       if (needSorted)
         sliderThresholdColors.Sort((SliderThresholdColors A, SliderThresholdColors B) => A.CompareTo(B)); // 升序
-      for (int i = 0; i < sliderThresholdColors.Count; i++)
+
+      // 把 threshold=1 合并进来
+      List<SliderThresholdColors> _threshold_list = new List<SliderThresholdColors>();
+      _threshold_list.AddRange(sliderThresholdColors);
+      _threshold_list.Add(normalColors);
+
+      for (int i = 0; i < _threshold_list.Count; i++)
       {
-        if (fillValue <= sliderThresholdColors[i].threshold)
+        SliderThresholdColors curThresholdColors = _threshold_list[i];
+        if (fillValue <= curThresholdColors.threshold)
         {
-          TransitionColor<Image>(background, background.color, sliderThresholdColors[i].bgColor);
-          TransitionColor<Image>(fillarea, fillarea.color, sliderThresholdColors[i].fillColor);
-          TransitionColor<TMP_Text>(text, text.color, sliderThresholdColors[i].textColor);
+          if (!curThresholdColors.IsActive)
+          {
+            for (int j = 0; j < _threshold_list.Count; j++) // 其余置 false，自己置 true
+            {
+              _threshold_list[j].IsActive = j == i;
+            }
+            TransitionColorTo<Image>(background, curThresholdColors.bgColor);
+            TransitionColorTo<Image>(fillarea, curThresholdColors.fillColor);
+            TransitionColorTo<TMP_Text>(text, curThresholdColors.textColor);
+          }
           return;
         }
       }
-      TransitionColor<Image>(background, background.color, bgColor);
-      TransitionColor<Image>(fillarea, fillarea.color, fillColor);
-      TransitionColor<TMP_Text>(text, text.color, textColor);
     }
 
     public string GetTextContent()
@@ -243,27 +241,6 @@ namespace YLBasic
       {
         return "";
       }
-    }
-
-    public void TransitionColor(Action<Color> onUpdate, Action onCompleted, Color src, Color tar)
-    {
-      AnimationOptions opt = new AnimationOptions();
-      opt.duration = transitionTime;
-      opt.onCompleted = onCompleted;
-      LAnimation ani = new LAnimation((v) =>
-      {
-        onUpdate(Color.Lerp(src, tar, v));
-      }, opt);
-      anis.Add(ani);
-      ani.Play();
-    }
-
-    public void TransitionColor<T>(T t, Color src, Color tar) where T : MaskableGraphic
-    {
-      if (EditorApplication.isPlaying && useTransition)
-        TransitionColor((Color c) => t.color = c, () => { }, src, tar);
-      else
-        t.color = tar;
     }
 
     public override void InitComponents()

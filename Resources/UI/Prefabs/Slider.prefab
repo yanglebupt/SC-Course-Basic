@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9057225970980564505}
-  - component: {fileID: 7775587006172595356}
+  - component: {fileID: 7852115073932141305}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -39,7 +39,7 @@ RectTransform:
   m_AnchoredPosition: {x: -230.6, y: -5.4}
   m_SizeDelta: {x: 166.6276, y: 166.63}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7775587006172595356
+--- !u!114 &7852115073932141305
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -52,14 +52,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Initialized: 0
+  useTransition: 1
+  commonOptions:
+    duration: 0.5
+    delay: 0
+    delayInIterations: 0
+    direction: 0
+    curve: 0
+    fill: 0
+    iterations: 0
+    removeOnCompleted: 0
   fillValue: 1
   background: {fileID: 0}
   fillarea: {fileID: 0}
   text: {fileID: 0}
-  fillColor: {r: 1, g: 1, b: 1, a: 1}
-  bgColor: {r: 0, g: 0, b: 0, a: 1}
+  normalColors:
+    threshold: 1
+    fillColor: {r: 1, g: 1, b: 1, a: 1}
+    bgColor: {r: 0, g: 0, b: 0, a: 1}
+    textColor: {r: 0, g: 0, b: 1, a: 1}
   sliderMode: 0
   fillMethod: 0
+  textMode: 0
   fillOrigin: 0
   fillOriginA: 0
   fillOriginR90: 0
@@ -67,8 +81,10 @@ MonoBehaviour:
   fillOriginV: 0
   sliderThresholdColors: []
   needSorted: 0
-  useTransition: 1
-  transitionTime: 0.05
+  textCount: 100
+  onValueChange:
+    m_PersistentCalls:
+      m_Calls: []
   rect: {fileID: 0}
   circle: {fileID: 0}
 --- !u!1 &4560484085550039904

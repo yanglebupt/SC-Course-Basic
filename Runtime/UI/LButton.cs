@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,7 +22,7 @@ namespace YLBasic
   }
 
 
-  public class LButton : CustomUI, IPointerMoveHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
+  public class LButton : AnimationUI, IPointerMoveHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
   {
     #region Fields
     [Tooltip("是否禁用按钮")]
@@ -34,10 +33,8 @@ namespace YLBasic
     public TMP_Text buttonText;
 
     [Header("Transition")]
-    [Tooltip("过渡时间")]
-    public ButtonTransitionMode transitionType = ButtonTransitionMode.None;
-    [Tooltip("过渡时间")]
-    public float transitionTime = 0.1f;
+    [Tooltip("过渡类型")]
+    public ButtonTransitionMode transitionType = ButtonTransitionMode.ColorImageAndText;
     [Tooltip("按钮正常背景颜色")]
     public Color imageNormalColor = Color.white;
     [Tooltip("按钮悬浮背景颜色")]
@@ -67,16 +64,9 @@ namespace YLBasic
     #endregion
 
     #region Private Fields
-    private Color ct;
-    private Color tt;
-    private Color ci;
-    private Color ti;
-    private Color CurrentTextColor { get => ct; set { ct = value; buttonText.color = value; } }
-    private Color CurrentImageColor { get => ci; set { ci = value; buttonImage.color = value; } }
-    private Color TargetTextColor { get => tt; set { TransitionTextColor(ct, value); } }
-    private Color TargetImageColor { get => ti; set { TransitionImageColor(ci, value); } }
+    private Color TargetTextColor { set { TransitionTextColor(value); } }
+    private Color TargetImageColor { set { TransitionImageColor(value); } }
     private bool isIn = false;
-    private List<LAnimation> anis = new List<LAnimation>();
     private bool inspectorControl = true;
     #endregion
 
@@ -88,22 +78,9 @@ namespace YLBasic
 
     private void InitColors()
     {
-      buttonImage.color = CurrentImageColor = disabled ? imageDisabledColor : imageNormalColor;
-      buttonText.color = CurrentTextColor = disabled ? textDisabledColor : textNormalColor;
-    }
-
-    private void FixedUpdate()
-    {
-      for (int i = anis.Count - 1; i >= 0; i--)  // 一边遍历，一边删除
-      {
-        LAnimation item = anis[i];
-        if (item.Completed)
-        {
-          anis.Remove(item);
-          continue;
-        }
-        item.Update(Time.fixedDeltaTime);
-      }
+      buttonImage.color = disabled ? imageDisabledColor : imageNormalColor;
+      buttonText.color = disabled ? textDisabledColor : textNormalColor;
+      if (disabled) StopAllAnimation();
     }
 
     public override void InitComponents()
@@ -114,59 +91,40 @@ namespace YLBasic
 
     #region Editor
 #if UNITY_EDITOR
-  public override void GenerateStructure()
-  {
-    base.GenerateStructure<LButton>("Assets/Scripts/07-UI操作/CustomUI/Prefabs/Button.prefab");
-  }
-  public override void DrawEditorPreview()
-  {
-    if (inspectorControl)
-      InitColors();
-  }
-  public override void DrawEditorPreview(SerializedObject serializedObject)
-  {
-    return;
-  }
+    public override void GenerateStructure()
+    {
+      GenerateStructure<LButton>("Packages/com.ylbupt.sc-course-basic/Resources/UI/Prefabs/Button.prefab");
+    }
+    public override void DrawEditorPreview()
+    {
+      if (inspectorControl)
+        InitColors();
+    }
+    public override void DrawEditorPreview(SerializedObject serializedObject)
+    {
+      return;
+    }
 #endif
     #endregion
 
-    public void TransitionTextColor(Color src, Color tar)
+    public void TransitionTextColor(Color tar)
     {
       if (transitionType == ButtonTransitionMode.None || transitionType == ButtonTransitionMode.ColorImageOnly)
       {
-        CurrentTextColor = tar;
-        if (!isIn) inspectorControl = true;
+        buttonText.color = tar;
       }
       else
-        TransitionColor((c) => buttonText.color = c, () => CurrentTextColor = tar, src, tar);
+        TransitionColorTo(buttonText, tar);
     }
 
-    public void TransitionImageColor(Color src, Color tar)
+    public void TransitionImageColor(Color tar)
     {
       if (transitionType == ButtonTransitionMode.None || transitionType == ButtonTransitionMode.ColorTextOnly)
       {
-        CurrentImageColor = tar;
-        if (!isIn) inspectorControl = true;
+        buttonImage.color = tar;
       }
       else
-        TransitionColor((c) => buttonImage.color = c, () => CurrentImageColor = tar, src, tar);
-    }
-
-    public void TransitionColor(Action<Color> onUpdate, Action onCompleted, Color src, Color tar)
-    {
-      AnimationOptions opt = new AnimationOptions();
-      opt.duration = transitionTime;
-      opt.onCompleted = () =>
-      {
-        if (!isIn) inspectorControl = true;
-        onCompleted();   // 离开后可以由面板控制颜色（前提是动画结束了）
-      };
-      LAnimation ani = new LAnimation((v) =>
-      {
-        onUpdate(Color.Lerp(src, tar, v));
-      }, opt);
-      anis.Add(ani);
-      ani.Play();
+        TransitionColorTo(buttonImage, tar);
     }
 
     public void OnPointerMove(PointerEventData eventData)
@@ -191,6 +149,7 @@ namespace YLBasic
       if (disabled) return;
       onPointerExit.Invoke();
       isIn = false; // 离开后可以由面板控制颜色（前提是动画结束了）
+      inspectorControl = true;
       TargetImageColor = imageNormalColor;
       TargetTextColor = textNormalColor;
     }
