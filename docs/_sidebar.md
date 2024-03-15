@@ -4,6 +4,8 @@
 * [Animation](./Animation.md)
 * [UI](./UI.md)
   * [Drag](./Drag.md)
+* [Reflect](./Reflect.md)
+* [LanguageLocalization](./LanguageLocalization.md)
 * [Tools](./Tools.md)
 
 

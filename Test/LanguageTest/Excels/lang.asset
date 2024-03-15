@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 402fc4e194ba0c04b9033133509f7b65, type: 3}
+  m_Name: lang
+  m_EditorClassIdentifier: 
+  languageSentences: []
+  Sheet1:
+  - name: hello
+    ch: "\u4F60\u597D\u5440"
+    en: Hello
+  - name: walk
+    ch: "\u4F60\u5E94\u8BE5\u8D70\u8FD9\u8FB9"
+    en: You should work this side

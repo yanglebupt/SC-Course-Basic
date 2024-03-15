@@ -2,7 +2,8 @@
     "name": "SC-Course-Basic.Test",
     "rootNamespace": "",
     "references": [
-        "GUID:eb540aacd5879bc4b87d0ab2d1661c26"
+        "GUID:eb540aacd5879bc4b87d0ab2d1661c26",
+        "GUID:4a82e496084bb4f3fb60aebcaa2f5361"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
