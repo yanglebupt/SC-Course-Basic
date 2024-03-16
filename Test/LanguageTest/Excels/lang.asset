@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402fc4e194ba0c04b9033133509f7b65, type: 3}
   m_Name: lang
   m_EditorClassIdentifier: 
-  languageSentences: []
-  Sheet1:
+  Sheet1: []
+  Sheet2:
   - name: hello
     ch: "\u4F60\u597D\u5440"
     en: Hello

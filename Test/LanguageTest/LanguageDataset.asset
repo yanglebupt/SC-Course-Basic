@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5932a8b7633c9e94cb9790a211afa175, type: 3}
-  m_Name: CustomLanguage
+  m_Name: LanguageDataset
   m_EditorClassIdentifier: 
-  languageSentences:
-  - ch: "\u5403\u554A"
-    en: Eat
+  Sheet1:
   - ch: "\u8BF4"
     en: Say
+  - ch: "\u5403"
+    en: Eat

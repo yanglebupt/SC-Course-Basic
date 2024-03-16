@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -21,15 +20,15 @@ namespace YLBasic
     private LDraggable draggable;
 
     #region Events
-    public UnityEvent<GameObject> initDraggableGameObject;
-    public UnityEvent onBeginDrag;
+    public UnityEvent<GameObject> initDraggableGameObject = new UnityEvent<GameObject>();
+    public UnityEvent onBeginDrag = new UnityEvent();  // 不挂载都是 Null
     [Tooltip("可以用来判断是否接触到可接受区域的")]
-    public UnityEvent onDrag;
-    public UnityEvent onEndDrag;
+    public UnityEvent onDrag = new UnityEvent();
+    public UnityEvent onEndDrag = new UnityEvent();
     [Tooltip("end 是否 attached")]
-    public UnityEvent<GameObject> onEndDragIsAttached;
+    public UnityEvent<GameObject> onEndDragIsAttached = new UnityEvent<GameObject>();
     [Tooltip("end 的时候 attached 是否冲突")]
-    public UnityEvent<GameObject, GameObject, GameObject> onEndDragAttachedOverlap;
+    public UnityEvent<GameObject, GameObject, GameObject> onEndDragAttachedOverlap = new UnityEvent<GameObject, GameObject, GameObject>();
     #endregion
 
     void Start()
@@ -75,22 +74,6 @@ namespace YLBasic
     public void OnEndDrag(PointerEventData eventData)
     {
       draggable.OnEndDrag(eventData);
-    }
-
-    public override void GenerateStructure()
-    {
-    }
-
-    public override void DrawEditorPreview(SerializedObject serializedObject)
-    {
-    }
-
-    public override void DrawEditorPreview()
-    {
-    }
-
-    public override void InitComponents()
-    {
     }
   }
 

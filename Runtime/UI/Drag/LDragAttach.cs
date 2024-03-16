@@ -16,17 +16,17 @@ namespace YLBasic
     public Color hoverColor = Color.red;
     [Tooltip("一旦吸附了draggable对象，则其不可再次拖出，除非有 dragspawn 组件")]
     public bool cancelDrag = true;
-    public UnityEvent OnHover;
-    public UnityEvent OnLeave;
-    public UnityEvent OnEnter;
-    public UnityEvent OnAttached;
+    public UnityEvent OnHover = new UnityEvent();
+    public UnityEvent OnLeave = new UnityEvent();
+    public UnityEvent OnEnter = new UnityEvent();
+    public UnityEvent OnAttached = new UnityEvent();
 
     [Tooltip("end 的时候 attached 是否冲突")]
-    public UnityEvent<GameObject, GameObject, GameObject> OnAttachedOverlap;
-    public UnityEvent<GameObject> OnHoverParams;
-    public UnityEvent<GameObject> OnLeaveParams;
-    public UnityEvent<GameObject> OnEnterParams;
-    public UnityEvent<GameObject> OnAttachedParams;
+    public UnityEvent<GameObject, GameObject, GameObject> OnAttachedOverlap = new UnityEvent<GameObject, GameObject, GameObject>();
+    public UnityEvent<GameObject> OnHoverParams = new UnityEvent<GameObject>();
+    public UnityEvent<GameObject> OnLeaveParams = new UnityEvent<GameObject>();
+    public UnityEvent<GameObject> OnEnterParams = new UnityEvent<GameObject>();
+    public UnityEvent<GameObject> OnAttachedParams = new UnityEvent<GameObject>();
 
     private Color defaultColor;
     private bool isActive = false;
@@ -80,6 +80,7 @@ namespace YLBasic
       {
         throw new System.Exception("Not Intersect with draggable");
       }
+
       if (dragAttach.IsAttached)
       {
         InvokeOnAttachedOverlap?.Invoke(dragAttach.AttachedGameObject, draggableRect.gameObject, dragAttachRect.gameObject);
@@ -87,6 +88,11 @@ namespace YLBasic
       }
       else
       {
+        if (draggableRect.gameObject == dragAttach.AttachedGameObject)
+        {
+          dragAttach.isAttached = true;
+          return;
+        }
         Tools.RemoveAllChildren(dragAttachRect.gameObject);
         draggableRect.position = dragAttachRect.position;
         draggableRect.SetParent(dragAttachRect);
@@ -126,22 +132,6 @@ namespace YLBasic
     {
       OnAttached?.Invoke();
       OnAttachedParams?.Invoke(obj);
-    }
-
-    public override void GenerateStructure()
-    {
-    }
-
-    public override void DrawEditorPreview(UnityEditor.SerializedObject serializedObject)
-    {
-    }
-
-    public override void DrawEditorPreview()
-    {
-    }
-
-    public override void InitComponents()
-    {
     }
   }
 

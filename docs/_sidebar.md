@@ -6,6 +6,7 @@
   * [Drag](./Drag.md)
 * [Reflect](./Reflect.md)
 * [LanguageLocalization](./LanguageLocalization.md)
+* [Inventory](./Inventory.md)
 * [Tools](./Tools.md)
 
 

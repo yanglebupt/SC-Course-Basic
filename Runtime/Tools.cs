@@ -87,7 +87,7 @@ namespace YLBasic
       for (int i = 0; i < parent.transform.childCount; i++)
       {
         transform = parent.transform.GetChild(i);
-        GameObject.Destroy(transform.gameObject);
+        GameObject.DestroyImmediate(transform.gameObject);
       }
     }
   }

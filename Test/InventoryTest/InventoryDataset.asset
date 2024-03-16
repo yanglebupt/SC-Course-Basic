@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e4e7c099bf5c2f4ba3ed50df615f48d, type: 3}
+  m_Name: InventoryDataset
+  m_EditorClassIdentifier: 
+  Sheet1:
+  - Id: 0
+    Name: "\u72FC\u7259\u68D2"
+    Desc: "\u8FD9\u65F6\u4E00\u4E2A\u6B66\u5668"
+    EquipType: "\u6B66\u5668"
+    SpritePath: Assets/SC-Course-Basic/Resources/Icons/Icon14_07.png
+    Effect: "\u6389\u8840"
+  - Id: 1
+    Name: "\u9762\u5305"
+    Desc: "\u8FD9\u65F6\u4E00\u4E2A\u9762\u5305"
+    EquipType: "\u98DF\u7269"
+    SpritePath: Assets/SC-Course-Basic/Resources/Icons/Icon14_39.png
+    Effect: "\u52A0\u8840"
+  - Id: 2
+    Name: "\u7EF3\u7D22"
+    Desc: "\u8FD9\u65F6\u4E00\u4E2A\u7EF3\u7D22"
+    EquipType: "\u5DE5\u5177"
+    SpritePath: Assets/SC-Course-Basic/Resources/Icons/Icon14_38.png
+    Effect: "\u5E2E\u52A9"
+  - Id: 3
+    Name: "\u87BA\u6BCD"
+    Desc: "\u8FD9\u65F6\u4E00\u4E2A\u87BA\u6BCD"
+    EquipType: "\u5DE5\u5177"
+    SpritePath: Assets/SC-Course-Basic/Resources/Icons/Icon14_03.png
+    Effect: "\u5E2E\u52A9"

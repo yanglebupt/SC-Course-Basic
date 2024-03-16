@@ -96,7 +96,7 @@ void SetLang(string lang)
 
 ## LanguageDataset
 
-该类是一个 `ScriptableObject`，不需要实例化，是做为基类用来存贮语言库的。使用如下
+`LanguageDataset<T>` 该类继承自 `ScriptableObject`，不需要实例化，是做为基类用来存贮语言库的。泛型 `T` 代表语言类型字段，使用如下
 
 ```csharp
 [Serializable]
@@ -106,36 +106,34 @@ public class LanguageSentence
   public string en;
 }
 
-[CreateAssetMenu(fileName = "CustomLanguage", menuName = "LanguageDataset", order = 0)]
-public class CustomLanguage : LanguageDataset<LanguageSentence> { }
+// 上面的定义表明，一句话有 ch 和 en 两种形式
+
+[CreateAssetMenu(fileName = "LanguageDataset", menuName = "LanguageDataset", order = 0)]
+public class CustomLanguageDataset : LanguageDataset<LanguageSentence> { }
 ```
 
-这样创建出来的 `CustomLanguage` 默认是读取 Excel 中的 `languageSentences` Sheet 做为语言库的。如果你想设置多个语言库组，可以多声明几个变量即可，注意变量名和 Sheet 名字一致，如下
+这样创建出来的 LanguageDataset.asset 文件默认是读取 Excel 中的 Sheet1 这个表作为语言库的。如果你想设置多个语言库组，可以多声明几个变量即可，注意变量名和 Sheet 名字一致，如下
 
 ```csharp
-[CreateAssetMenu(fileName = "CustomLanguage", menuName = "LanguageDataset", order = 0)]
-public class CustomLanguage : LanguageDataset<LanguageSentence> { 
-  public List<LanguageSentence> Sheet1; // 和 Excel 中的 Sheet 名字一致
-  public List<LanguageSentence> Sheet2;
+public class CustomLanguageDataset : LanguageDataset<LanguageSentence> { 
+  public List<LanguageSentence> Sheet2; // 和 Excel 中的 Sheet 名字一致
+  public List<LanguageSentence> Sheet3;
 
   public override string GetText(int id, string lang)
   {
-    LanguageSentence sentence = Sheet2[id];
-    var res = Reflect.get(sentence, lang);
-    return res is ReflectNotFoundError ? (res as ReflectNotFoundError).Message : res as string;
+    return GetText(id, lang, Sheet2);  // 默认是加载 Sheet1 的，可以重写从 Sheet2 中加载
   }
 }
 ```
 
 同时别忘了，重写一下 `GetText` 方法，以确保可以从正确的 Sheet 中读取文本。
 
-- 需要准备一个字体包含了各种语言类型，这样才加载的出来，目前还不支持根据语言类型设置不同的语言字体，后续会加入（同样使用 ScriptableObject）
 - Excel 转 `ScriptableObject` 插件使用的是 <a href="https://github.com/mikito/unity-excel-importer/tree/v0.1.1/upm">`Unity Excel Importer`</a>
 
 
 #### Methods
 
-`GetText()` 方法我们提供了许多重载，可以不传 `lang` 参数，则使用全局单例的语言类型
+`GetText()` 方法我们提供了许多重载，可以不传 `lang` 参数，则使用全局单例的语言类型。当然这个方法一般不需要我们自己调用，`LocalizationComponent` 组件通过反射机制去调用
 
 ```csharp
 public string GetText(int id)
@@ -160,13 +158,13 @@ public string GetText(string id, string lang)
 
 ## LanguageConfig
 
-语言配置的 `ScriptableObject`，使用如下
+`LanguageConfig<T>` 该类继承自 `ScriptableObject`，同样是做为基类用来存贮语言配置的。泛型 `T` 代表语言类型字段和要配置的属性名字，使用如下
 
 ```csharp
 [Serializable]
 public class LanguageConfigST
 {
-  public string name;  // 1
+  public string name;  // 1 必须要有一个字段来设置你要配置的属性名字
   public string ch; 
   public string en;
 }
@@ -185,7 +183,9 @@ public class CustomLanguageConfig : LanguageConfig<LanguageConfigST>
 
 #### GetConfig()
 
-返回对应语言的配置字典。Key 表示配置的属性，例如 `Font`，也就是上面的 `Name` 字段。Value 表示属性的资源路径
+返回对应语言的配置字典。Key 表示配置的属性，例如 `Font`，也就是上面的 `name` 字段值。Value 表示属性的资源路径
+
+当然这个方法一般不需要我们自己调用，`LocalizationComponent` 组件通过反射机制去调用
 
 ```csharp
 Dictionary<string, string> GetConifg(string lang)

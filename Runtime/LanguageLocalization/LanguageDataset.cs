@@ -5,7 +5,7 @@ namespace YLBasic
 {
   public class LanguageDataset<T> : ScriptableObject
   {
-    public List<T> languageSentences;
+    public List<T> Sheet1;
 
     public string GetText(int id)
     {
@@ -22,11 +22,16 @@ namespace YLBasic
       return GetText(int.Parse(id), lang);
     }
 
-    public virtual string GetText(int id, string lang)
+    public string GetText(int id, string lang, List<T> sheet)
     {
-      T sentence = languageSentences[id];
+      T sentence = sheet[id];
       var res = Reflect.get(sentence, lang);
       return res is ReflectNotFoundError ? (res as ReflectNotFoundError).Message : res as string;
+    }
+
+    public virtual string GetText(int id, string lang)
+    {
+      return GetText(id, lang, Sheet1);
     }
   }
 

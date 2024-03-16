@@ -11,6 +11,7 @@
 - `canDrag` 是否可以拖拽
 - `dragAttachList` 可接受区域 `LDragAttach` 目标位置数组，可以通过 `UpdateDragAttachList()` 来更新可接受区域目标位置数组
 - `CurrentDragAttachRect` 拖拽过程中接触到的可接受区域目标位置，在 `onDrag` 中会更新
+- `data = new object();` 拖拽对象关联的数据，这个在 `LDragSpawn` 生成一个可拖拽对象时很有帮助，可以区分生成的不同拖拽对象，`draggable.data = new { id };`
 
 #### Events
 

@@ -18,7 +18,6 @@ namespace YLBasic
 
     protected virtual void FixedUpdate()
     {
-      Debug.Log(anis.Count);
       for (int i = anis.Count - 1; i >= 0; i--)  // 一边遍历，一边删除
       {
         LAnimation item = anis[i];
@@ -76,6 +75,29 @@ namespace YLBasic
       ani.Play();
     }
 
+    public void TransitionAlpha(CanvasGroup t, float src, float tar, Action onCompleted)
+    {
+      if (EditorApplication.isPlaying && useTransition)
+        TransitionAlpha((float c) => t.alpha = c, onCompleted, src, tar);
+      else
+        t.alpha = tar;
+    }
+
+    public void TransitionAlpha(CanvasGroup t, float src, float tar)
+    {
+      TransitionAlpha(t, src, tar, () => { });
+    }
+
+    public void TransitionAlphaTo(CanvasGroup t, float tar, Action onCompleted)
+    {
+      TransitionAlpha(t, t.alpha, tar, onCompleted);
+    }
+
+    public void TransitionAlphaTo(CanvasGroup t, float tar)
+    {
+      TransitionAlphaTo(t, tar, () => { });
+    }
+
     public void TransitionAlpha<T>(T t, float src, float tar, Action onCompleted) where T : MaskableGraphic
     {
       if (EditorApplication.isPlaying && useTransition)
@@ -115,5 +137,24 @@ namespace YLBasic
     {
       return new Color(color.r, color.g, color.b, alpha);
     }
+
+#if UNITY_EDITOR
+    public override void GenerateStructure()
+    {
+    }
+
+    public override void DrawEditorPreview(UnityEditor.SerializedObject serializedObject)
+    {
+    }
+
+    public override void DrawEditorPreview()
+    {
+    }
+
+    public override void InitComponents()
+    {
+    }
+#endif
+
   }
 }

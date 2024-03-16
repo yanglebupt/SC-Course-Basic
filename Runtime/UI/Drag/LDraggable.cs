@@ -27,17 +27,20 @@ namespace YLBasic
     private RectTransform target;
     #endregion
 
+    [HideInInspector]
+    public object data = new object();
+
     #region Events
     [Tooltip("可以用来初始化设置一些拖拽数据")]
-    public UnityEvent onBeginDrag;
+    public UnityEvent onBeginDrag = new UnityEvent();
     [Tooltip("可以用来判断是否接触到可接受区域的")]
-    public UnityEvent onDrag;
+    public UnityEvent onDrag = new UnityEvent();
     [Tooltip("end 判断是否 attached")]
-    public UnityEvent onEndDrag;
+    public UnityEvent onEndDrag = new UnityEvent();
     [Tooltip("end 后 attached 触发 ")]
-    public UnityEvent<GameObject> onEndDragIsAttached;
+    public UnityEvent<GameObject> onEndDragIsAttached = new UnityEvent<GameObject>();
     [Tooltip("end 的时候 attached 是否冲突")]
-    public UnityEvent<GameObject, GameObject, GameObject> onEndDragAttachedOverlap;
+    public UnityEvent<GameObject, GameObject, GameObject> onEndDragAttachedOverlap = new UnityEvent<GameObject, GameObject, GameObject>();
     #endregion
 
     // 可放置目标集合
@@ -197,26 +200,6 @@ namespace YLBasic
         throw new System.Exception("dst does not has LDragAttach component");
       }
       LDragAttach.Attach(target, dst, (GameObject src, GameObject tar, GameObject attach) => onEndDragAttachedOverlap?.Invoke(src, tar, attach));
-    }
-
-    public override void GenerateStructure()
-    {
-      return;
-    }
-
-    public override void DrawEditorPreview(UnityEditor.SerializedObject serializedObject)
-    {
-      return;
-    }
-
-    public override void DrawEditorPreview()
-    {
-      return;
-    }
-
-    public override void InitComponents()
-    {
-      return;
     }
   }
 
